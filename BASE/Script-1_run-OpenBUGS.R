@@ -116,7 +116,7 @@
   	setwd(wd4)
   	jpeg(file=paste(fname, ".jpg", sep=""), quality=150)
   	abscissa=1:num.measurements
-  	plot(abscissa,DO.meas,pch=1,xlab="Timestep" , col="grey")
+  	plot(abscissa,DO.meas,pch=1,xlab="Timestep" , col="grey", ylim=c(min(min(DO.meas),min(metab$mean$DO.modelled)), max(max(DO.meas),max(metab$mean$DO.modelled))))
   	points(abscissa,metab$mean$DO.modelled, type="l")
   	dev.off()
   
