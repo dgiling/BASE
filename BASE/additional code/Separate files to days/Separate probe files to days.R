@@ -7,8 +7,8 @@
 
 # UPDATE DIRECTORIES ONLY:
 
-input.directory<-"[directory]/Separate files to days/input"
-output.directory <- "[directory]/Separate files to days/output"
+input.directory<-"[your directory]/additional code/Separate files to days/input"
+output.directory <- "[your directory]/additional code/Separate files to days/output"
 
 
 #----------------------------------
