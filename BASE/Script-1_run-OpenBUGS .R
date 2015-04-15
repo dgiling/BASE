@@ -1,6 +1,6 @@
   
   
-  ### GRACE et al. BASE MODEL ###
+  ### GRACE et al. 2015 'BASE' CODE ###
   
   # SCRIPT 1
   
@@ -12,7 +12,7 @@
   
   # (A) SET LOCATION OF 'BASE' FOLDER (e.g. "C:/Desktop/Analysis")
   folder.location <-"[your directory]"
-  
+    
   #-------------------------------------------------------------
   
   # (B) SET MEASUREMENT INTERVAL (SECONDS)  (must be the same for all files in a run)
@@ -91,9 +91,9 @@
   	# (inspect the main parameters for convergence using bgr diagrams, history, density and autocorrelation)
   	setwd(wd1) 
   	metab=NULL
-  	metab=bugs(data.list,inits,parameters.to.save=params,model.file="Script-2_metab-model.txt",n.thin=1,n.iter=n.iter,n.burnin=n.burnin, n.chains=3, 
-               debug=F)  # <---------- DEBUG ARGUMENT -----------
-  	
+  	metab=bugs(data.list,inits,parameters.to.save=params,model.file="Script-2_metab-model.txt", n.thin=1,n.iter=n.iter,n.burnin=n.burnin, n.chains=3, 
+               debug=T)  # <---------- DEBUG ARGUMENT -----------
+    
   	# print(metab, digits=2) # to inspect results of last "metab" estimate
   
   	# append results to table and write table
@@ -114,11 +114,18 @@
   
   	# fitting plot and printing
   	setwd(wd4)
-  	jpeg(file=paste(fname, ".jpg", sep=""), quality=150)
-  	abscissa=1:num.measurements
-  	plot(abscissa,DO.meas,pch=1,xlab="Timestep" , col="grey", ylim=c(min(min(DO.meas),min(metab$mean$DO.modelled)), max(max(DO.meas),max(metab$mean$DO.modelled))))
-  	points(abscissa,metab$mean$DO.modelled, type="l")
-  	dev.off()
+  	jpeg(file=paste(fname, ".jpg", sep=""), width=600, height=1000, quality=250, pointsize=30)
+  	
+    par(mfrow=c(3,1), mar=c(4,4,1,1))
+    abscissa=1:num.measurements
+  	plot(abscissa,DO.meas,pch=1 ,ylab="DO mg/l", col="grey50", xlab="",ylim=c(min(min(DO.meas),min(metab$mean$DO.modelled)), max(max(DO.meas),max(metab$mean$DO.modelled))), las=1, bty="l")
+  	points(abscissa,metab$mean$DO.modelled, type="l", lwd=2)
+  	legend("topleft", c("data","fit"), col=c("grey50","black"), lwd=c(1,2), lty=c(0,1), pch=c(1,NA),bty="n")
+        
+  	plot(1:num.measurements,tempC,pch=1 , typ='p', col="grey50", xlab="", las=1, bty="l")
+  	plot(1:num.measurements,I,pch=1, typ='p', col="grey50",xlab="Timestep",ylab="PAR", las=1, bty="l")
+    
+    dev.off()
   
   	}
   
@@ -129,4 +136,4 @@
   end.time<-NULL; end.time<-Sys.time()
   start.time
   end.time
-  
+  end.time-start.time
