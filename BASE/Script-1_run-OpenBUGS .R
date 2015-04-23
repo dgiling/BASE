@@ -92,7 +92,7 @@
   	setwd(wd1) 
   	metab=NULL
   	metab=bugs(data.list,inits,parameters.to.save=params,model.file="Script-2_metab-model.txt", n.thin=1,n.iter=n.iter,n.burnin=n.burnin, n.chains=3, 
-               debug=T)  # <---------- DEBUG ARGUMENT -----------
+               debug=F)  # <---------- DEBUG ARGUMENT -----------
     
   	# print(metab, digits=2) # to inspect results of last "metab" estimate
   
