@@ -11,18 +11,18 @@
   #-------------------------------------------------------------
   
   # (A) SET LOCATION OF 'BASE' FOLDER (e.g. "C:/Desktop/Analysis")
-  folder.location <-"[your directory]"
+  #folder.location <-"[your directory]"
     
   #-------------------------------------------------------------
   
   # (B) SET MEASUREMENT INTERVAL (SECONDS)  (must be the same for all files in a run)
-  interval<-600
+  interval<-300
   
   #-------------------------------------------------------------
   
   # (C) SET NUMBER OF MODEL ITERATIONS (DEFAULT 2000/1000)
-  n.iter<-2000
-  n.burnin<-1000
+  n.iter<-1000
+  n.burnin<-500
   
   #-------------------------------------------------------------
   
@@ -44,13 +44,13 @@
   K.mean <- 0 #(reaeration.prior * interval)/sec.per.day  # 5/day 
   R.mean <- 0 #(respiration.prior * interval)/sec.per.day    # 5/day
   File <- 0; GPP.mean <- 0; ER.mean <- 0; theta.mean <- 0; theta.sd <- 0; p.mean <- 0; p.sd<- 0; PPfit.mean <- 0
-  GPP.sd <- 0; ER.sd <- 0; K.sd <- 0; R2<- 0
+  GPP.sd <- 0; ER.sd <- 0; K.sd <- 0; R2<- 0; rmse<- 0; rmse.relative<- 0; mrl.fraction<- 0;
   convergence.check <- 0; A.Rhat <- 0; R.Rhat <- 0; K.Rhat <- 0; theta.Rhat<- 0; p.Rhat<- 0; R.Rhat<- 0; gpp.Rhat<- 0
   DIC <- 0; pD <- 0
   
   output.table<-NULL
   output.table<-data.frame(File,GPP.mean , GPP.sd, ER.mean, ER.sd, K.mean, K.sd, theta.mean, theta.sd, 
-  p.mean, p.sd, PPfit.mean, R2, convergence.check, A.Rhat, R.Rhat, K.Rhat, theta.Rhat, p.Rhat, gpp.Rhat, DIC, pD)
+  p.mean, p.sd, PPfit.mean, R2, rmse, rmse.relative, mrl.fraction, convergence.check, A.Rhat, R.Rhat, K.Rhat, theta.Rhat, p.Rhat, gpp.Rhat, DIC, pD)
   
   # define monitoring variables
   params=c("A","R","K","p","theta","sd","ER","gpp","sum.obs.resid","sum.ppa.resid","PPfit","DO.modelled")
@@ -83,6 +83,12 @@
   	kern=as.integer(runif(1000,min=1,max=10000))
   	iters=sample(kern,1)
   	
+    ## TEMP
+  	#library(zoo)
+  	#smooth<- function(x) (rollapply(x, 5, mean, na.rm=T,align="center"))  
+    #I<-c(I[1:2],smooth(I),I[length(I)-1],I[length(I)] )
+    ## TEMP
+    
   	data.list <- list("num.measurements","interval","tempC","DO.meas","I","salinity","atmo.pressure")  
   	
     # call OpenBUGS and store results in object "metab"
@@ -95,16 +101,26 @@
                debug=F)  # <---------- DEBUG ARGUMENT -----------
     
   	# print(metab, digits=2) # to inspect results of last "metab" estimate
-  
+    
   	# append results to table and write table
   	R2 = cor(metab$mean$DO.modelled,DO.meas)^2
+    rmse = sqrt(sum((metab$mean$DO.modelled-DO.meas)^2)/length(DO.meas))
+    	
+    DO.lag<-DO.meas[2:length(DO.meas)]-DO.meas[1:(length(DO.meas)-1)]
+    ptpvar <- sqrt((sum((DO.lag)^2)/(length(DO.meas)-1))) # point to point variation
+    rmse.relative <- rmse / ptpvar
+    
+    diff<-metab$mean$DO.modelled-DO.meas
+  	mrl.max<-max(rle(sign(as.vector(diff)))$lengths)
+  	mrl.fraction<-max(rle(sign(as.vector(diff)))$lengths)/length(DO.meas) # prop of largest run
+            
   	test<-NULL;convergence.check<-NULL
   	test<- any(c(metab$summary[1,8] , metab$summary[2,8], metab$summary[3,8], metab$summary[5,8], metab$summary[4,8], metab$summary[8,8])>1.1)
   	convergence.check<- ifelse(test==TRUE, "Check mixing", "Fine")
   
   	result <- c(fname, metab$mean$gpp, metab$sd$gpp, metab$mean$ER, metab$sd$ER, metab$mean$K*(sec.per.day/interval), 
   			metab$sd$K*(sec.per.day/interval),  metab$mean$theta, metab$sd$theta, metab$mean$p, metab$sd$p, 
-        metab$mean$PPfit, R2, convergence.check,
+        metab$mean$PPfit, R2, rmse, rmse.relative, mrl.fraction, convergence.check,
   			metab$summary[1,8] , metab$summary[2,8], metab$summary[3,8], metab$summary[5,8], metab$summary[4,8], metab$summary[8,8], 
         metab$DIC, metab$pD)
   	

@@ -34,12 +34,12 @@ model
 
 
 	# (Z1) theta and p (effectively) fixed - xx just makes them stochastic
-	 theta <- tf + xx; tf<- 1.07177; xx ~ dnorm(0, 1000000)
-	 p <- pf + xx; pf<- 1.0
+	# theta <- tf + xx; tf<- 1.07177; xx ~ dnorm(0, 1000000)
+	# p <- pf + xx; pf<- 1.0
 	
 	# (Z2) treat theta and p as estimable parameters
-	# theta ~ dnorm(0.0,0.25)I(1.0,1.3)
-	# p ~ dnorm(0.0,0.25)I(0.3,1.0)
+	 theta ~ dnorm(0.0,0.25)I(1.0,1.3)
+	 p ~ dnorm(0.0,0.25)I(0.3,1.0)
 
 
 	#-------------------------------------------------------------
@@ -54,7 +54,6 @@ model
 
 
 	sd ~ dunif(0.001,0.2); tau <- 1/(sd*sd)
-
 
 
 	sec.per.day <- 24 * 60 * 60
@@ -97,8 +96,13 @@ model
 
 	# DO modelled
 	zz ~ dnorm(0,1000000)
-	DO.modelled[1] <- DO.meas[1] + zz # make monitorable
-	DO.sampled.fit[1] <- DO.meas[1] + zz # make monitorable
+	# DO.modelled[1] <- DO.meas[1] + zz # make monitorable
+	# DO.sampled.fit[1] <- DO.meas[1] + zz # make monitorable
+
+	DO.sd <- sd(DO.meas[])
+	DO.tau <- 1 / (DO.sd * DO.sd)
+	DO.modelled[1] ~ dnorm(DO.meas[1], DO.tau)
+	DO.sampled.fit[1] ~ dnorm(DO.meas[1], DO.tau)
 
 	for (i in 2:num.measurements)
 	{		
