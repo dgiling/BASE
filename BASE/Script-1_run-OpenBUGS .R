@@ -11,7 +11,7 @@
   #-------------------------------------------------------------
   
   # (A) SET LOCATION OF 'BASE' FOLDER (e.g. "C:/Desktop/Analysis")
-  #folder.location <-"[your directory]"
+  folder.location <-"[your directory]"
     
   #-------------------------------------------------------------
   
@@ -21,8 +21,8 @@
   #-------------------------------------------------------------
   
   # (C) SET NUMBER OF MODEL ITERATIONS (DEFAULT 2000/1000)
-  n.iter<-1000
-  n.burnin<-500
+  n.iter<-2000
+  n.burnin<-1000
   
   #-------------------------------------------------------------
   
@@ -44,13 +44,13 @@
   K.mean <- 0 #(reaeration.prior * interval)/sec.per.day  # 5/day 
   R.mean <- 0 #(respiration.prior * interval)/sec.per.day    # 5/day
   File <- 0; GPP.mean <- 0; ER.mean <- 0; theta.mean <- 0; theta.sd <- 0; p.mean <- 0; p.sd<- 0; PPfit.mean <- 0
-  GPP.sd <- 0; ER.sd <- 0; K.sd <- 0; R2<- 0; rmse<- 0; rmse.relative<- 0; mrl.fraction<- 0;
+  GPP.sd <- 0; ER.sd <- 0; K.sd <- 0; R2<- 0; rmse<- 0; rmse.relative<- 0; mrl.fraction<- 0; ER.K.cor<-0;
   convergence.check <- 0; A.Rhat <- 0; R.Rhat <- 0; K.Rhat <- 0; theta.Rhat<- 0; p.Rhat<- 0; R.Rhat<- 0; gpp.Rhat<- 0
   DIC <- 0; pD <- 0
   
   output.table<-NULL
   output.table<-data.frame(File,GPP.mean , GPP.sd, ER.mean, ER.sd, K.mean, K.sd, theta.mean, theta.sd, 
-  p.mean, p.sd, PPfit.mean, R2, rmse, rmse.relative, mrl.fraction, convergence.check, A.Rhat, R.Rhat, K.Rhat, theta.Rhat, p.Rhat, gpp.Rhat, DIC, pD)
+  p.mean, p.sd, PPfit.mean, R2, rmse, rmse.relative, mrl.fraction, ER.K.cor, convergence.check, A.Rhat, R.Rhat, K.Rhat, theta.Rhat, p.Rhat, gpp.Rhat, DIC, pD)
   
   # define monitoring variables
   params=c("A","R","K","p","theta","sd","ER","gpp","sum.obs.resid","sum.ppa.resid","PPfit","DO.modelled")
@@ -114,13 +114,15 @@
   	mrl.max<-max(rle(sign(as.vector(diff)))$lengths)
   	mrl.fraction<-max(rle(sign(as.vector(diff)))$lengths)/length(DO.meas) # prop of largest run
             
+  	ER.K.cor <- cor(metab$sims.list$ER,metab$sims.list$K) # plot(metab$sims.list$ER ~ metab$sims.list$K)
+    
   	test<-NULL;convergence.check<-NULL
   	test<- any(c(metab$summary[1,8] , metab$summary[2,8], metab$summary[3,8], metab$summary[5,8], metab$summary[4,8], metab$summary[8,8])>1.1)
   	convergence.check<- ifelse(test==TRUE, "Check mixing", "Fine")
   
   	result <- c(fname, metab$mean$gpp, metab$sd$gpp, metab$mean$ER, metab$sd$ER, metab$mean$K*(sec.per.day/interval), 
   			metab$sd$K*(sec.per.day/interval),  metab$mean$theta, metab$sd$theta, metab$mean$p, metab$sd$p, 
-        metab$mean$PPfit, R2, rmse, rmse.relative, mrl.fraction, convergence.check,
+        metab$mean$PPfit, R2, rmse, rmse.relative, mrl.fraction, ER.K.cor, convergence.check,
   			metab$summary[1,8] , metab$summary[2,8], metab$summary[3,8], metab$summary[5,8], metab$summary[4,8], metab$summary[8,8], 
         metab$DIC, metab$pD)
   	
@@ -153,3 +155,6 @@
   start.time
   end.time
   end.time-start.time
+  
+  
+  
