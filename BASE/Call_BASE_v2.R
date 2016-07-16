@@ -33,10 +33,10 @@
   
   start.time<-NULL; start.time<-Sys.time()
   
-  wd1<- paste(folder.location, "/BASE_v2", sep="")
-  wd2<- paste(folder.location, "/BASE_v2/input", sep="")
-  wd3<- paste(folder.location, "/BASE_v2/output", sep="")
-  wd4<- paste(folder.location, "/BASE_v2/output/validation plots", sep="")
+  wd1<- paste(folder.location, "/BASE", sep="")
+  wd2<- paste(folder.location, "/BASE/input", sep="")
+  wd3<- paste(folder.location, "/BASE/output", sep="")
+  wd4<- paste(folder.location, "/BASE/output/validation plots", sep="")
   
   # set up output table array
   sec.per.day<-86400
