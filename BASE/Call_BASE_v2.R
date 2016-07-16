@@ -12,9 +12,8 @@
   #-------------------------------------------------------------
   
   # (A) SET LOCATION OF 'BASE' FOLDER (e.g. "C:/Desktop/Analysis")
-  # folder.location <- "[your directory]"  # example
-  folder.location <-"C:/Users/dg45koti/Dropbox/Code/BASE_jags_update_v2"
-  
+  folder.location <- "[your directory]" 
+
   #-------------------------------------------------------------
   
   # (B) SET MEASUREMENT INTERVAL (SECONDS)  (must be the same for all files in a run)
