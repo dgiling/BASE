@@ -1,4 +1,4 @@
-BASE
+BASE v2
 ====
 
 Fast processing of diel oxygen curves: estimating stream metabolism with BASE (BAyesian Single-station Estimation) 
