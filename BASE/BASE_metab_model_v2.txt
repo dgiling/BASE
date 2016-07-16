@@ -1,0 +1,126 @@
+
+             model
+                  {
+                    
+                    # PRIORS
+                    
+                    #-------------------------------------------------------------
+                    
+                    # (Y) Set treatment of K prior:
+                    
+                    # (Y1) K estimated simultaneously by model
+                    K ~ dnorm(0,0.25)I(0,) 	
+                    
+                    
+                    # (Y2) K mean and uncertainty measured
+                    # measured.k <- 10 # your estimate of k (example of 10)
+                    # measured.k.sd <- 0.0001   # your estimate of standard deviation of k (example of 0.0001 - this will give an essentially known and fixed k)
+                    # kf<- measured.k / (sec.per.day / interval)	
+                    # k.prec <- 1/(measured.k.sd*measured.k.sd)
+                    # K ~ dnorm(kf,k.prec)I(0,)
+                    
+                    
+                    #-------------------------------------------------------------
+                    
+                    # (Z) Set estimation of theta and p parameters:
+                    
+                    # (Z1) theta and p (effectively) fixed - xx just makes them stochastic
+                    p <- 1.0    
+                    theta <- 1.07177
+
+                    # (Z2) treat theta and p as estimable parameters
+                    # theta ~ dnorm(0.0,0.25)I(1.0,1.3)
+                    # p ~ dnorm(0.0,0.25)I(0.3,1.0)
+                   
+                                 
+
+                    #-------------------------------------------------------------
+                    ## DO NOT ALTER BELOW HERE
+
+                    A ~ dnorm(0,0.25)I(0,)
+                    R ~ dnorm(0,0.25)I(0,)	
+                    
+                    sd ~ dunif(0.001,0.2); tau <- 1/(sd*sd)
+                    
+                    sec.per.day <- 24 * 60 * 60
+                    
+		    # NEW alternate PI parameterisation
+                    #P1 ~ dnorm(0,0.001)I(0,)
+                    #P2 ~ dnorm(0, 0.01)I(0,)
+
+                    for (i in 1:num.measurements)
+                          {
+                          kelvin[i] <- 273.15 + tempC[i]
+                          
+                          # correction for salinity
+                          
+                          S1[i] <- 157570.1 / kelvin[i]
+                          S2[i] <- -6.6423080E7 / (kelvin[i] * kelvin[i])
+                          S3[i] <- 1.2438E10 / pow(kelvin[i],3)
+                          S4[i] <-  -8.621949E11 / pow(kelvin[i],4)
+                          sal.factor[i] <- -1.0*salinity[i]*(0.017674-10.754/kelvin[i]+2140.7/(kelvin[i]*kelvin[i]))
+                          
+                          DOsalinity.corr[i] <-exp(-139.34411+S1[i]+S2[i]+S3[i]+S4[i]+sal.factor[i])
+                          
+                          # correction for atmospheric pressure
+                          alpha[i] <- 0.000975-0.00001426*kelvin[i]+0.00000006436*pow(kelvin[i],2)		
+                          beta[i] <- exp(11.8571-3840.7/kelvin[i]-216961/pow(kelvin[i],2))
+                          gamma[i] <- ((1-beta[i]/atmo.pressure[i]) / (1-beta[i])) * ((1-alpha[i]*atmo.pressure[i])/(1-alpha[i]))
+                          
+                          DO.sat[i] <- DOsalinity.corr[i]*atmo.pressure[i]*gamma[i]		
+                                                         			  
+                          }
+                    
+                    temp.ave <- mean(tempC[])
+                    
+                    Aprime <- A # no cut in jags
+                    pprime <- p # no cut in jags
+                    gppts[num.measurements] <- 0 #updated
+
+                    # for posterior predictive assessment and goodness of fit evaluation
+                    obs.resid[num.measurements] <- 0
+                    ppa.resid[num.measurements] <- 0
+                    
+                    # DO modelled
+                    zz ~ dnorm(0,1000000)
+                    DO.modelled[1] <- DO.meas[1] + zz # make monitorable
+                    
+                    
+                    for (i in 1:(num.measurements-1))
+                            {		
+                            # estimating primary production
+                            gppts[i] <- Aprime*pow(PAR[i],pprime) # Grace et al 2015
+                            # gppts[i] <- PAR[i] / (P1 + P2*PAR[i]) # alternate parameterisation
+                                                       
+                            DO.meas[i+1] ~ dnorm(DO.modelled[i+1], tau)
+                            DO.modelled[i+1] <- DO.modelled[i] +
+					A * pow(PAR[i],p) # Grace et al 2015 parameterisation
+                                      			#  PAR[i] / (P1 + P2*PAR[i-1]) # alternate parameterisation
+                                      	- R * (pow(theta,(tempC[i]-temp.ave)))
+                                      	+ K * (DO.sat[i]-DO.modelled[i]) * pow(1.0241,(tempC[i]-temp.ave))
+                            
+
+                            # posterior predictive assessment nodes #
+                                                       
+                            # plausible sampled value
+                            DO.sampled.fit[i] ~ dnorm(DO.modelled[i], tau) 
+                                                        
+                            # squared residuals		
+                            obs.resid[i] <- pow((DO.meas[i] - DO.modelled[i]),2)
+                            ppa.resid[i] <- pow((DO.sampled.fit[i] - DO.modelled[i]),2)
+                            
+                            }
+                    
+                    # for posterior predictive assessment and goodness of fit evaluation
+                    sum.obs.resid <- sum(obs.resid[])
+                    sum.ppa.resid <- sum(ppa.resid[])
+                    PPfit <- step(sum.obs.resid - sum.ppa.resid)
+                    
+                    ## Useful calculations
+                    ER <- (R * sec.per.day) / interval
+                    GPP <- sum(gppts[])
+                    NEP <- GPP - ER
+                    K.day <- (K * sec.per.day) / interval
+                    
+                    }
+          
