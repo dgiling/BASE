@@ -6,3 +6,9 @@ http://onlinelibrary.wiley.com/doi/10.1002/lom3.10011/full
 
 PDF user guide included in 'BASE' folder. Download the whole folder as a zip file to get started. 
 Contact: Darren Giling (darren.giling@idiv.de) or Mike Grace (Mike.Grace@monash.edu).
+
+
+Recent updates:
+July 2016:  - Changes to model structure following suggestions made by Song et al (2016) L&O:M doi: 10.1002/lom3.10112
+            - Implementated parallel computing of chains
+
