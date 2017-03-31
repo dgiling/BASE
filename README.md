@@ -18,6 +18,6 @@ October 2016
 - Added output of rates on sub-daily timescale
 
 July 2016
-- Changes to model structure following suggestions made by Song et al (2016) L&O:M doi: 10.1002/lom3.10112
+- Changes to model structure following findings of Song et al (2016) L&O:M doi: 10.1002/lom3.10112
 - Implementated parallel computing of chains
 
