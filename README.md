@@ -1,4 +1,4 @@
-BASE v2.1
+BASE v2.2
 =========
 
 Code accompanying Grace et al. (2015) Fast processing of diel oxygen curves: estimating stream metabolism with BASE (BAyesian Single-station Estimation). Limnology and Oceanography: Methods, 13, 103–114
@@ -10,6 +10,9 @@ Contact: Darren Giling (darren.giling@idiv.de) or Mike Grace (Mike.Grace@monash.
 
 
 Recent updates:
+
+March 2017
+- Fix to prior distribution for tau
 
 October 2016
 - Added output of rates on sub-daily timescale
