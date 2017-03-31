@@ -11,13 +11,13 @@ Contact: Darren Giling (darren.giling@idiv.de) or Mike Grace (Mike.Grace@monash.
 
 Recent updates:
 
-March 2017
+March 2017 (v2.2)
 - Fix to the prior distribution for tau
 
-October 2016
+October 2016 (v2.1)
 - Added output of rates on sub-daily timescale
 
-July 2016
+July 2016 (v2.0)
 - Changes to model structure following findings of Song et al (2016) L&O:M doi: 10.1002/lom3.10112
 - Implementated parallel computing of chains
 
