@@ -14,6 +14,7 @@ January 2018 (v2.3)
 **nb: This is the last update as we plan to now implement the code as a package, stay tuned.**
 - Simplified file handling
 - Smoothing of PAR and DO
+- Automated updating of unconverged chains
 - Added better physical constraints on some priors
 
 March 2017 (v2.2)
