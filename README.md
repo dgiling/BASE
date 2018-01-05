@@ -12,10 +12,10 @@ Recent updates:
 
 January 2018 (v2.3)
 **nb: This is the last update as we plan to now implement the code as a package, stay tuned.**
-- Simplified file handling (no need to separate before running)
+- Simplified file handling (no need to separate files before running)
 - Smoothing of PAR and DO
 - Automated updating of unconverged chains
-- Added better physical constraints on some priors
+- Added better physical constraints on K prior
 
 March 2017 (v2.2)
 - Fix to the prior distribution for tau
