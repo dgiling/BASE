@@ -11,7 +11,7 @@ Contact: Darren Giling (darren.giling@idiv.de) or Mike Grace (Mike.Grace@monash.
 Recent updates:
 
 January 2018 (v2.3)
-nb: This is the last update as we plan to implement the code as a package, stay tuned.
+**nb: This is the last update as we plan to now implement the code as a package, stay tuned.**
 - Simplified file handling
 - Smoothing of PAR and DO
 - Added better physical constraints on some priors
