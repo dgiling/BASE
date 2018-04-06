@@ -1,7 +1,7 @@
 BASE v2.3
 =========
 
-**NOTE (April 2018): This code is now implemented as an R package, which can be installed from github with devtools. See https://github.com/dgiling/BASEmetab and user guide: https://github.com/dgiling/BASEmetab/blob/master/vignettes/BASEmetab.pdf**
+**NOTE (April 2018): This code is now implemented as an R package 'BASEmetab', which can be installed from github with devtools. See repo (https://github.com/dgiling/BASEmetab) and user guide (https://github.com/dgiling/BASEmetab/blob/master/vignettes/BASEmetab.pdf)**
 
 Code accompanying Grace et al. (2015) Fast processing of diel oxygen curves: estimating stream metabolism with BASE (BAyesian Single-station Estimation). Limnology and Oceanography: Methods, 13, 103–114
 http://onlinelibrary.wiley.com/doi/10.1002/lom3.10011/full
